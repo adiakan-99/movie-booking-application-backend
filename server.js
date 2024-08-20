@@ -227,16 +227,23 @@ app.post("/insert/theatreseating", (req, res) => {
 
 app.get("/get/theatreseating/:theatrename", async (req, res) => {
     try {
-        const receivedTheatreName = req.params.theatrename
+        const receivedTheatreName = req.params.theatrename;
+        console.log("Received theatre name:", receivedTheatreName);  // Log the received theatre name
 
-        const theatreDetails = await TheatreSeatingModel.findOne({ theatreName: receivedTheatreName })
+        const theatreDetails = await TheatreSeatingModel.findOne({ theatreName: receivedTheatreName });
+        console.log("Theatre details:", theatreDetails);  // Log the found theatre details
 
-        res.json({ "theatreDetails": theatreDetails })
+        if (!theatreDetails) {
+            return res.status(404).json({ message: "Theatre not found" });
+        }
+
+        res.json({ theatreDetails });
+    } catch (error) {
+        console.error("Error fetching theatre details:", error);
+        res.status(500).json({ message: "Unable to get theatre details!" });
     }
-    catch (error) {
-        res.status(500).json({ "message": "Unable to get theatre details!" })
-    }
-})
+});
+
 
 const razorpayDetails = new Razorpay({
     key_id: "rzp_test_tQU9lVNtUvQtjs",
